@@ -30,7 +30,7 @@ class CViolaJonesDetection:
     def generate_dataset(self, img):
     #  --------------------------------------------------------------------------------------------
         # write image in data dir
-        cv.imwrite("1_ViolaJones/data/user." + str(self.id) + "." + str(self.index) + ".jpg", img)
+        cv.imwrite("antrenare/output1/user." + str(self.id) + "." + str(self.index) + ".jpg", img)
 
 
     #  --------------------------------------------------------------------------------------------
@@ -38,8 +38,8 @@ class CViolaJonesDetection:
     # --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.1
-        minNeighbors = 10
+        scaleFactor = 1.05
+        minNeighbors = 3
         color = colors['blue']
         text = "Fataaaa"
         # transformare in grayscale
@@ -125,9 +125,9 @@ class CViolaJonesDetection:
 #                 i = i + 1
 
 # functie ca sa imi ia din toate folderelefete si sa mi le salveze cum trebuie
-def saveFaceFromImage (myfolder_path="1_ViolaJones/dataInput/*"):
+def saveFaceFromImage (myfolder_path="antrenare/dataset/*"):
     id = 1
-    for dir in glob.glob("1_ViolaJones/dataInput/*"):
+    for dir in glob.glob("antrenare/dataset/*"):
         index = 1
         for filename in glob.glob(os.path.join(dir, "*.jpg")):
             try:

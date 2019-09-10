@@ -1,0 +1,11 @@
+INSERT INTO usersTest (name, image)
+VALUES("Beyonce", "D:/licenta/0_LicentaFinal/BD/photos/1.jpg");
+
+INSERT INTO usersTest (name, image)
+VALUES("David Schwimmer", "D:/licenta/0_LicentaFinal/BD/photos/2.jpg");
+
+INSERT INTO usersTest (name, image)
+VALUES("Jennifer Aniston", "D:/licenta/0_LicentaFinal/BD/photos/3.jpg");
+
+select *
+from usersTest;

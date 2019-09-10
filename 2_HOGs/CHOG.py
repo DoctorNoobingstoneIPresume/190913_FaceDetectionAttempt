@@ -61,14 +61,12 @@ class CHOG(CBaseMethod):
                 # Check for id of user and label the rectangle accordingly
                 # Aici poate pun ceva cu baza de date
                 if id == 1:
-                    cv.putText(image, "Andra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                    cv.putText(image, "Beyonce", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 elif id == 2:
-                    cv.putText(image, "Alexandra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                    cv.putText(image, "Steve", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 elif id == 3:
-                    cv.putText(image, "Cosmin", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 5:
-                    cv.putText(image, "Demet", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                # coords = [x, y, w, h]
+                    cv.putText(image, "Rachel", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                coords = [x, y, xw, yh]
             else:
                 cv.putText(image, "Unknown", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
         return image

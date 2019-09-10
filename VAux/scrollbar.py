@@ -1,50 +1,40 @@
 from tkinter import *
 import math
+import sqlite3
+import cv2 as cv
+import PIL.Image, PIL.ImageTk
 
+conn = sqlite3.connect('../BD/database.db')
+c = conn.cursor()
 
-class ScrolledCanvas(Frame):
-    def __init__(self, master=None, nrElem=0):
-
+class ShowPeople:
+    def __init__(self, master, nr):
         self.master = master
-
-        w = 650
-        h = 550
-
-        canv = Canvas(master, bg="#111111", bd=0, highlightthickness=0, relief='ridge')
-        canv.config(width=w, height=h)
-        self.canv = canv
-
-        newHeight = math.ceil((nrElem/5)*h)
-
-        if newHeight > h:
-            self.scrollbar(newHeight)
-        else:
-            self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
+        self.nr = nr
 
 
-    def scrollbar(self, height):
-        # scrollbar
-        self.canv.config(scrollregion=(0,0,650, height))
-        sbar = Scrollbar(self.master)
-        sbar.config(command=self.canv.yview)
-        self.canv.config(yscrollcommand=sbar.set)
-        sbar.pack(side=RIGHT, fill=Y)
-        self.canv.pack(side=LEFT, expand=YES, fill=BOTH)
-
-        self.sbar = sbar
-
-    def addPerson (self, x, y, w, h, tn, td):
+    def addPerson (self, x, y, w, h, tn, ti, isIdent, td):
         textNume = StringVar()
         textNume.set(tn)
+        textPath = ti
         textData = StringVar()
         textData.set(td)
 
-        personInfo = Frame(self.canv, height=h, width=w, bg="blue", bd=2)
+        personInfo = Frame(self.master, height=h, width=w, bg="blue", bd=2)
         personInfo.pack_propagate(0) # don't shrink
         personInfo.place(x=x, y=y, anchor="nw")
 
-        image =  Canvas(personInfo, height=130, width=123, bg="yellow", bd=2) # width = self.input.width, height = self.input.height)
-        image.pack()
+        canvas =  Canvas(personInfo, height=130, width=130) # width = self.input.width, height = self.input.height
+        image = cv.imread(textPath)
+        if int(isIdent) == 0:
+            img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        else:
+            img = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+
+        resized = cv.resize(img, (130,130))
+        self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(resized))
+        canvas.create_image(0,0, anchor=NW, image = self.photo)
+        canvas.pack()
 
         name = Label(personInfo, text=textNume.get(), bg="#E6E6E6", bd=2)
         name.pack(fill=X)
@@ -54,36 +44,40 @@ class ScrolledCanvas(Frame):
 
 
 
-root = Tk()
+class dbOp:
+    def __init__(self, database='../BD/database.db'):
+        self.conn = sqlite3.connect(database)
+        self.c = self.conn.cursor()
 
-frame=Frame(root,width=670,height=550)
+    def __delete__(self):
+        self.conn.commit()
+        self.conn.close()
+
+    def getData (self, uid):
+        c = self.c
+        c.execute("SELECT name FROM usersTest WHERE id = {id}".format(id=uid))
+        nume = str(c.fetchall())[3:-4]
+        c.execute("SELECT image FROM usersTest WHERE id = {id}".format(id=uid))
+        image = str(c.fetchall())[3:-4]
+        c.execute("SELECT ident FROM usersTest WHERE id = {id}".format(id=uid))
+        found = str(c.fetchall())[2:-3]
+        c.execute("SELECT date FROM usersTest WHERE id = {id}".format(id=uid))
+        date = str(c.fetchall())[3:-4]
+        return (nume, image, found, date)
+
+    def getAllDbEntries(self):
+        c = self.c
+        c.execute("SELECT COUNT(*) FROM usersTest")
+        nr = str(c.fetchall())[2:-3]
+        return nr
+
+root = Tk()
+frame=Canvas(root,width=670,height=550)
 frame.pack(expand=YES, fill=BOTH)
 
-## var
-x = 0
-y = 0
-w = 130
-h = 183
-name = "name"
-date = "date"
-elementsNo = 2
-
-canvas = ScrolledCanvas(frame, 20)
-
-# step = 1
-# while elementsNo:
-#     if step == 6:
-#         x = 0
-#         y += h
-#         step = 1
-
-nume = "nume" + str(elementsNo)
-canvas.addPerson(x, y, w, h, "Andreea C", "2019-09-08 20:12:32")
-x += w
-canvas.addPerson(x, y, w, h, "Cosmin C", "2019-09-08 20:12:34")
-    # elementsNo -= 1
-    # step += 1
-
-
-
 root.mainloop()
+
+conn.commit()
+conn.close()
+cv.waitKey(0)
+cv.destroyAllWindows()

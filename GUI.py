@@ -6,7 +6,9 @@
 # import tkinter as tk
 from tkinter import *
 from tkinter.filedialog import *
-from CStart import CStart
+from CStart import *
+
+
 
 # ==============================================================================
 #                               CLASE
@@ -154,11 +156,13 @@ def selInput():
 
 def start():
     if startFile.get() % 2 == 1:
+        output.cleanCanvas()
         b6.config(image = buttonStop)
         output.selectMethod(varMethod.get(),varInput.get(),str(file_path.get()))
     else:
         b6.config(image = buttonStart)
         output.delete()
+        output.showMeThePeople();
         # output.setStartImage('InterfataButoane/imaginePornire.jpg')
     startFile.set(startFile.get() + 1)
 
@@ -183,6 +187,7 @@ root.title("FC")
 
 output = CStart(root)
 output.setStartImage('InterfataButoane/imaginePornire1.jpg')
+
 
 # -----------------------------------
 # variabile folositoare
@@ -236,6 +241,8 @@ b5 = HoverButtonBottom(frameBottom, text="Start new session", activeforeground='
 b5.config(command=cleanAll)
 b5.place(x=30, y=558, anchor="nw")
 
+fromPause = IntVar()
+fromPause.set(0)
 startFile = IntVar()
 startFile.set(1)
 b6 = HoverButtonBottom(frameBottom, width=70, height=40, activeforeground='#5ED2E5', command=start)

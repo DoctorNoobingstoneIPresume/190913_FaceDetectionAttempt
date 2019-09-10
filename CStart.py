@@ -14,7 +14,8 @@ sys.path.insert(2,'2_HOGs/')
 from CHOG import CHOG
 sys.path.insert(3,'3_DeepLearning/')
 from CDeepLearning import CDeepLearning
-
+sys.path.insert(4,'BD/')
+from dbMethods import *
 
 class CStart(Canvas):
     # --------------------------------------------------------------------------
@@ -26,8 +27,12 @@ class CStart(Canvas):
         self.canvas = Canvas(master, height=550, width=670, bg="#111111", bd=0, highlightthickness=0, relief='ridge') # width = self.input.width, height = self.input.height)
         self.canvas.place(x=230, anchor="nw")
 
+        self.canvasBack = Canvas(self.canvas, height=550, width=670, bg="#111111", bd=0, highlightthickness=0, relief='ridge') # width = self.input.width, height = self.input.height)
+
         self.timeStart = time.perf_counter()
         self.timerID = 0
+
+        self.myCanvas = []
 
     # --------------------------------------------------------------------------
     def selectMethod(self, method, typeInput, inputFile=""):
@@ -48,41 +53,9 @@ class CStart(Canvas):
             self.method = CDeepLearning(str(typeInput),self.input_path)
 
         self.timerr = 0
-        self.prepare()
-
-
-    # --------------------------------------------------------------------------
-    def prepare(self):
-    # --------------------------------------------------------------------------
-        # pregatiri
-        W = 670
-        H = 550
-
-        # to set values for resize images/frames
-        w, h = self.method.getSize()
-
-        if w > W:
-            aux = h
-            h = (W/w)*aux
-            w = W
-        if h > H:
-            aux = w
-            w = (H/h)*aux
-            h = H
-        if w < W and h < H:
-            if w > h:
-                h = (W/w)*h
-                w = W
-            else:
-                w = (H/h)*w
-                h = H
-
-        self.width = int(w)
-        self.height = int(h)
-
+        # self.prepare()
         self.update()
 
-        # After it is called once, the update method will be automatically called every delay milliseconds
 
     # --------------------------------------------------------------------------
     def update(self):
@@ -129,6 +102,43 @@ class CStart(Canvas):
         # pic = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(image))
         # self.canvas.create_image(width/2, height/2, anchor=CENTER, image = pic)
 
+
+    # --------------------------------------------------------------------------
+    def showMeThePeople(self):
+    # --------------------------------------------------------------------------
+        self.canvasBack.place(x=0, anchor="nw")
+
+        db = dbOp()
+        nr = int(db.getAllDbEntries()) + 1
+        db.updateTable(2,1,"2019-09-10 20:54")
+        db.updateTable(3,1,"2019-09-10 20:54")
+        w=134
+        h=183
+        W = 670
+        H = 550
+
+        x = 0
+        y = 0
+        i = 1
+
+        while i < nr:
+            canvas = ShowPeople(self.canvasBack,i)
+            if x == W:
+                x = 0
+                y = y + h
+            (nume, image, found, date) = db.getData(i)
+            print (nume + " " + found)
+            canvas.addPerson(x, y, w, h, nume, image, found, date)
+            self.myCanvas.append(canvas)
+            x += w
+            i += 1
+
+    # --------------------------------------------------------------------------
+    def cleanCanvas(self):
+    # --------------------------------------------------------------------------
+        del self.myCanvas[:]
+        self.canvasBack.place_forget()
+
     # --------------------------------------------------------------------------
     def delete(self):
     # --------------------------------------------------------------------------
@@ -138,4 +148,36 @@ class CStart(Canvas):
         self.canvas.delete("all")
 
 
-# App(Tk(), "Tkinter and OpenCV", "00videos/lunch_scene.mp4")
+# # App(Tk(), "Tkinter and OpenCV", "00videos/lunch_scene.mp4")
+# # --------------------------------------------------------------------------
+# def prepare(self):
+# # --------------------------------------------------------------------------
+#     # pregatiri
+#     W = 670
+#     H = 550
+#
+#     # to set values for resize images/frames
+#     w, h = self.method.getSize()
+#
+#     if w > W:
+#         aux = h
+#         h = (W/w)*aux
+#         w = W
+#     if h > H:
+#         aux = w
+#         w = (H/h)*aux
+#         h = H
+#     if w < W and h < H:
+#         if w > h:
+#             h = (W/w)*h
+#             w = W
+#         else:
+#             w = (H/h)*w
+#             h = H
+#
+#     self.width = int(w)
+#     self.height = int(h)
+#
+#     self.update()
+#
+#     # After it is called once, the update method will be automatically called every delay milliseconds

@@ -26,4 +26,4 @@ def train_classifer(data_dir):
     clf.write("classifier.xml")
 
 
-train_classifer("data")
+train_classifer("../antrenare/output1")

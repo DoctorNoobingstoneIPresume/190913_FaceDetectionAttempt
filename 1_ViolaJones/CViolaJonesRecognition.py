@@ -32,8 +32,8 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
     # --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.05
-        minNeighbors = 3
+        scaleFactor = 1.1
+        minNeighbors = 10
         color = colors['green']
         text = "Fataaaa"
 
@@ -51,17 +51,15 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
             id, _ = self.classifier.predict(gray_img[y:y+h, x:x+w])   # vezi cu confidence
             confidence = 1.0 / (1.0 + math.exp(-id));
 
-            if confidence > 0.8:
+            if confidence > 0.9:
                 # Check for id of user and label the rectangle accordingly
                 # Aici poate pun ceva cu baza de date
                 if id == 1:
-                    cv.putText(image, "Andra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                    cv.putText(image, "Beyonce", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 elif id == 2:
-                    cv.putText(image, "Alexandra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                    cv.putText(image, "Steve", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 elif id == 3:
-                    cv.putText(image, "Cosmin", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 5:
-                    cv.putText(image, "Demet", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                    cv.putText(image, "Rachel", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 coords = [x, y, w, h]
             else:
                 cv.putText(image, "Unknown", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
@@ -73,9 +71,8 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
         scaleFactor = 1.05   # reduce cu 5% imaginea la fiecare parcurgere
-        minNeighbors = 3     # intre 3-6  
+        minNeighbors = 3     # intre 3-6
         color = colors['green']
-        text = "Fataaaa"
 
         # transformare in grayscale
         gray_img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -88,3 +85,18 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
         for (x, y, w, h) in features:
             cv.rectangle(image, (x,y), (x+w, y+h), color, 2)
         return image
+
+
+# def saveFaceFromImage (myfolder_path="antrenare/dataset/*"):
+#     id = 1
+#     for dir in glob.glob("antrenare/dataset/*"):
+#         index = 1
+#         for filename in glob.glob(os.path.join(dir, "*.jpg")):
+#             try:
+#                 print (dir + " " + filename)
+#                 face = CViolaJonesDetection("1", filename, id, index)
+#                 face.getIma()
+#                 index = index + 1
+#             except:
+#                 print("Nasol")
+#         id = id + 1

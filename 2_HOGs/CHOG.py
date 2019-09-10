@@ -33,8 +33,7 @@ class CHOG(CBaseMethod):
     #  --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.1
-        minNeighbors = 10
+        depth = 1
         color = colors['green']
         text = "Fataaaa"
 
@@ -43,7 +42,7 @@ class CHOG(CBaseMethod):
         # 1 time.  This will make everything bigger and allow us to detect more
         # faces.
         img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        dets = self.detector(img, 1)
+        dets = self.detector(img, depth)
         # coords = []
 
         for k, d in enumerate(dets):
@@ -75,12 +74,11 @@ class CHOG(CBaseMethod):
         return image
 
     #  --------------------------------------------------------------------------------------------
-    def detectFaces (self):
+    def detectFaces (self, image):
     #  --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.1
-        minNeighbors = 10
+        depth = 3
         color = colors['green']
         text = "Fataaaa"
 
@@ -89,7 +87,7 @@ class CHOG(CBaseMethod):
         # 1 time.  This will make everything bigger and allow us to detect more
         # faces.
         img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        dets = self.detector(img, 3)
+        dets = self.detector(img, depth)
         # coords = []
 
         for k, d in enumerate(dets):
@@ -99,3 +97,4 @@ class CHOG(CBaseMethod):
             yh = d.bottom() # y  + h
             # print ("Detection {}: Left: {} Top: {} Right: {} Bottom: {}".format(k, d.left(), d.top(), d.right(), d.bottom()))
             cv.rectangle(image, (x, y), (xw, yh), color, 2)
+        return image

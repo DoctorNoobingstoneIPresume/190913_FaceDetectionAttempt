@@ -32,8 +32,8 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
     # --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.1
-        minNeighbors = 10
+        scaleFactor = 1.05
+        minNeighbors = 3
         color = colors['green']
         text = "Fataaaa"
 
@@ -72,8 +72,8 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
     # --------------------------------------------------------------------------------------------
         # variavile locale folositoare
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
-        scaleFactor = 1.1
-        minNeighbors = 10
+        scaleFactor = 1.05   # reduce cu 5% imaginea la fiecare parcurgere
+        minNeighbors = 3     # intre 3-6  
         color = colors['green']
         text = "Fataaaa"
 
@@ -87,21 +87,4 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
         # desenare contur fata
         for (x, y, w, h) in features:
             cv.rectangle(image, (x,y), (x+w, y+h), color, 2)
-            # Predicting the id of the user
-            id, _ = self.classifier.predict(gray_img[y:y+h, x:x+w])   # vezi cu confidence
-            confidence = 1.0 / (1.0 + math.exp(-id));
-
-            if confidence > 0.8:
-                # Check for id of user and label the rectangle accordingly
-                # Aici poate pun ceva cu baza de date
-                if id == 1:
-                    cv.putText(image, "Andra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 2:
-                    cv.putText(image, "Alexandra", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 3:
-                    cv.putText(image, "Cosmin", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 5:
-                    cv.putText(image, "Demet", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                coords = [x, y, w, h]
-            else:
-                cv.putText(image, "Unknown", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+        return image

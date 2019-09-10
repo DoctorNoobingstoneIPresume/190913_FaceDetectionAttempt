@@ -27,7 +27,7 @@ class CStart(Canvas):
         self.canvas.place(x=230, anchor="nw")
 
         self.timeStart = time.perf_counter()
-
+        self.timerID = 0
 
     # --------------------------------------------------------------------------
     def selectMethod(self, method, typeInput, inputFile=""):
@@ -132,7 +132,8 @@ class CStart(Canvas):
     # --------------------------------------------------------------------------
     def delete(self):
     # --------------------------------------------------------------------------
-        self.master.after_cancel(self.timerID)
+        if self.timerID != 0:
+            self.master.after_cancel(self.timerID)
         del self.method
         self.canvas.delete("all")
 

@@ -39,7 +39,7 @@ class CBaseMethod:
     #  --------------------------------------------------------------------------------------------
     def getImage(self, width=670):
     #  --------------------------------------------------------------------------------------------
-        # self.img = imutils.resize(self.img, width)
+        self.img = imutils.resize(self.img, width)
         image = self.recognizeFaces(self.img)
         return cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
@@ -53,7 +53,7 @@ class CBaseMethod:
             # h, w, c = img.shape
             # print(str(ret) + " -- width:" + str(w) + " height: " + str(h))
             # self.img = imutils.resize(img, width)
-            image = self.recognizeFaces(img)
+            image = self.detectFaces(img)
             if ret:
                 # Return a boolean success flag and the current frame converted to BGR
                 return (ret, cv.cvtColor(image, cv.COLOR_BGR2RGB))

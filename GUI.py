@@ -8,7 +8,9 @@ from tkinter import *
 from tkinter.filedialog import *
 from CStart import *
 
-
+# Ca sa detectez rapid daca OpenCV cu Face Recognition a fost instalat corect, activez urmatoarele doua linii.
+#import cv2
+#cv2.face.LBPHFaceRecognizer_create()
 
 # ==============================================================================
 #                               CLASE
@@ -139,14 +141,22 @@ def trace_var(*args):
         b6.configure(state=DISABLED)
 
 
-def addPath():
-    file = askopenfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("mp4 files","*.mp4"),("avi files","*.avi"),("all files","*.*")))
+def addPath(x):
+    my_filetypes = ()
+    if (x == 1):
+        my_filetypes = (("Images", "*.jpg;*.png;*.gif;*.bmp" ), ("All files","*.*"))
+    elif (x == 2):
+        my_filetypes = (("Videos", "*.mp4;*.avi;*.mpg;*.mpeg"), ("All files","*.*"))
+    else:
+        raise NotImplementedError()
+
+    file = askopenfilename(initialdir = "/",title = "Select file",filetypes = my_filetypes)
     file_path.set(file)
     return file
 
 def ok():
     filepath = file_path.get()
-    if varInput.get() == 1 and (filepath[-3:] == 'jpg' or filepath[-3:] == 'png'):
+    if varInput.get() == 1 and (filepath[-3:] == 'jpg' or filepath[-3:] == 'png' or filepath[-3:] == 'gif' or filepath[-3:] == 'bmp'):
         selInput.set(1)
     elif varInput.get() == 2 and (filepath[-3:] == 'mp4' or filepath[-3:] == 'avi'):
         selInput.set(1)
@@ -160,15 +170,16 @@ def selMethod():
 
 
 def selInput():
-    if varInput.get() == 1 or varInput.get() == 2:
-        file = addPath()
+    x = varInput.get()
+    if x == 1 or x == 2:
+        file = addPath(x)
         if file == '':
             DialogBox(root, "Nothing selected! Please select a file!")
         else:
             ok()
 
         #root.wait_window(d.top)
-    if varInput.get() == 3:
+    if x == 3:
         selInput.set(1)
 
 def start():
@@ -257,6 +268,8 @@ R2 = Radiobutton(frameLeft, text="Semi-profile Recognision", variable=varMethod,
 R2.place(x=40, y=100, anchor="nw")
 R3 = Radiobutton(frameLeft, text="Complex Recognition", variable=varMethod, value=3, command=selMethod, bg="#212121", fg="white", activebackground="#212121", activeforeground="white", selectcolor="black")
 R3.place(x=40, y=130, anchor="nw")
+R5 = Radiobutton(frameLeft, text="Random"             , variable=varMethod, value=5, command=selMethod, bg="#212121", fg="white", activebackground="#212121", activeforeground="white", selectcolor="black")
+R5.place(x=40, y=160, anchor="nw")
 
 varInput = IntVar()
 R1 = Radiobutton(frameLeft, text="Image from path", variable=varInput, value=1, command=selInput, bg="#212121", fg="white", activebackground="#212121", activeforeground="white", selectcolor="black")

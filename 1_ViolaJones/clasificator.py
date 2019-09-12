@@ -23,7 +23,7 @@ def train_classifer(data_dir):
     # Train and save classifier
     clf = cv2.face.LBPHFaceRecognizer_create()
     clf.train(faces, ids)
-    clf.write("classifier.xml")
+    clf.write("classifier.yml")
 
 
 train_classifer("../antrenare/output1")

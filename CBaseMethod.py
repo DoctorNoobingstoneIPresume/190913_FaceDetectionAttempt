@@ -7,8 +7,9 @@ import numpy as np
 import imutils
 import sys
 import math
-import concurrent.futures
-
+# import concurrent.futures
+sys.path.insert(4,'BD/')
+from dbMethods import *
 
 # =================================================================================================
 #                                       CLASS  BASE METHOD
@@ -20,6 +21,7 @@ class CBaseMethod:
         self.tip = tip
         self.cale = cale
         self.recognizeAllFaces()
+        self.bd = dbOp()
 
 
 

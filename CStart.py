@@ -34,6 +34,7 @@ class CStart(Canvas):
 
         self.myCanvas = []
 
+
     # --------------------------------------------------------------------------
     def selectMethod(self, method, typeInput, inputFile=""):
     # --------------------------------------------------------------------------
@@ -72,8 +73,8 @@ class CStart(Canvas):
             self.canvas.create_image(width/2, height/2, anchor=CENTER, image = self.photo)
         else:
             ret, frame = method.getFrame()
-            img = cv.resize(frame, (self.width, self.height))
-            #im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+            #img = cv.resize(frame, (self.width, self.height))
+            # im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
             if ret:
                 self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
                 self.canvas.create_image(width/2, height/2, anchor=CENTER, image = self.photo)
@@ -110,8 +111,7 @@ class CStart(Canvas):
 
         db = dbOp()
         nr = int(db.getAllDbEntries()) + 1
-        db.updateTable(2,1,"2019-09-10 20:54")
-        db.updateTable(3,1,"2019-09-10 20:54")
+
         w=134
         h=183
         W = 670
@@ -133,6 +133,21 @@ class CStart(Canvas):
             x += w
             i += 1
 
+
+    # --------------------------------------------------------------------------
+    def saveDataDB(self):
+    # --------------------------------------------------------------------------
+        db = dbOp()
+        db.saveChangesToMainTable()
+
+    # --------------------------------------------------------------------------
+    def clearTable(self):
+    # --------------------------------------------------------------------------
+        db = dbOp()
+        db.clearTable()
+
+
+
     # --------------------------------------------------------------------------
     def cleanCanvas(self):
     # --------------------------------------------------------------------------
@@ -146,6 +161,32 @@ class CStart(Canvas):
             self.master.after_cancel(self.timerID)
         del self.method
         self.canvas.delete("all")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # # App(Tk(), "Tkinter and OpenCV", "00videos/lunch_scene.mp4")

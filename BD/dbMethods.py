@@ -71,9 +71,19 @@ class dbOp:
 
     def updateTable(self, uid, uident, udate):
         c = self.c
+        print(str(uid) + " " + str(uident) + " " + udate)
         sql = "UPDATE usersTest SET ident=?, date=? WHERE id=?"
         complete=(uident,udate,uid)
         c.execute(sql, complete)
+        self.conn.commit()
+
+    def clearTable(self):
+        c = self.c
+        sql = """
+        UPDATE usersTest
+        SET ident=0, date=NULL
+        """
+        c.executescript(sql)
         self.conn.commit()
 
     def saveChangesToMainTable(self):

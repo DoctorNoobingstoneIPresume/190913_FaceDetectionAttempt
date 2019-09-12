@@ -32,8 +32,8 @@ class CDeepLearning(CBaseMethod):
         self.embedder = cv.dnn.readNetFromTorch(embeddingModel)
 
         # load the actual face recognition model along with the label encoder
-        recognizerPickle = "antrenare/output3/recognizer.pickle"
-        lePickle = "antrenare/output3/le.pickle"
+        recognizerPickle = "antrenare/recognizer.pickle"
+        lePickle = "antrenare/le.pickle"
         self.recognizer = pickle.loads(open(recognizerPickle, "rb").read())
         self.le = pickle.loads(open(lePickle, "rb").read())
 
@@ -47,7 +47,7 @@ class CDeepLearning(CBaseMethod):
 
         colors = {"blue":(255,0,0), "red":(0,0,255), "green":(0,255,0), "white":(255,255,255)}
         color = colors['green']
-        newSize = 1000
+        newSize = 300
 
         (h, w) = image.shape[:2]
         blob = cv.dnn.blobFromImage(cv.resize(image, (newSize, newSize)), 1.0, (newSize, newSize),

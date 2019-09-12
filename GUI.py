@@ -142,14 +142,31 @@ def trace_var(*args):
 def addPath():
     file = askopenfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("mp4 files","*.mp4"),("avi files","*.avi"),("all files","*.*")))
     file_path.set(file)
+    return file
 
+def ok():
+    filepath = file_path.get()
+    if varInput.get() == 1 and (filepath[-3:] == 'jpg' or filepath[-3:] == 'png'):
+        selInput.set(1)
+    elif varInput.get() == 2 and (filepath[-3:] == 'mp4' or filepath[-3:] == 'avi'):
+        selInput.set(1)
+    else:
+        selInput.set(0)
+        filepath=""
+        DialogBox(root, "Wrong format inserted!")
 
 def selMethod():
     selMethod.set(1)
 
+
 def selInput():
     if varInput.get() == 1 or varInput.get() == 2:
-        d = MyDialogInput(root)
+        file = addPath()
+        if file == '':
+            DialogBox(root, "Nothing selected! Please select a file!")
+        else:
+            ok()
+
         #root.wait_window(d.top)
     if varInput.get() == 3:
         selInput.set(1)
@@ -166,13 +183,34 @@ def start():
         # output.setStartImage('InterfataButoane/imaginePornire.jpg')
     startFile.set(startFile.get() + 1)
 
+def changeFaceData():
+    addPath()
+
+def saveData():
+    output.saveDataDB()
+
+
+
+
 def cleanAll():
     varMethod.set(0)
     varInput.set(0)
     selMethod.set(0)
     selInput.set(0)
+
+    output.clearTable()
+    output.cleanCanvas()
     output.delete()
-    output.setStartImage('InterfataButoane/imaginePornire.jpg')
+    
+    if selMethod.get()==0 or selInput.get()==0:
+        b6.configure(state=NORMAL)
+        output.setStartImage('InterfataButoane/imaginePornire.jpg')
+        b6.configure(state=DISABLED)
+    else:
+        output.setStartImage('InterfataButoane/imaginePornire.jpg')
+
+
+
 
 
 # ==============================================================================
@@ -231,10 +269,10 @@ R3.place(x=40, y=280, anchor="nw")
 
 
 # buotanele de jos
-b3 = HoverButton(frameLeft, text="Save data", activeforeground='#5ED2E5')
+b3 = HoverButton(frameLeft, text="Save data", activeforeground='#5ED2E5', command=saveData)
 b3.place(x=30, y=470, anchor="nw")
 
-b4 = HoverButton(frameLeft, text="Change face data", activeforeground='#5ED2E5')
+b4 = HoverButton(frameLeft, text="Change face data", activeforeground='#5ED2E5', command=changeFaceData)
 b4.place(x=30, y=500, anchor="nw")
 
 b5 = HoverButtonBottom(frameBottom, text="Start new session", activeforeground='#5ED2E5')

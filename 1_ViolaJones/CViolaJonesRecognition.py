@@ -6,6 +6,7 @@ import cv2 as cv
 import numpy as np
 import math
 import concurrent.futures
+from datetime import datetime
 
 import sys
 sys.path.insert(1,'../')
@@ -24,7 +25,7 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
 
         # clasificator custom
         self.classifier = cv.face.LBPHFaceRecognizer_create()
-        self.classifier.read("1_ViolaJones\\classifier.xml")
+        self.classifier.read("1_ViolaJones\\classifier.yml")
 
 
     #  --------------------------------------------------------------------------------------------
@@ -51,15 +52,21 @@ class CViolaJonesRecognition(CBaseMethod): ## haar cascades -> massive xml files
             id, _ = self.classifier.predict(gray_img[y:y+h, x:x+w])   # vezi cu confidence
             confidence = 1.0 / (1.0 + math.exp(-id));
 
+
+
             if confidence > 0.9:
                 # Check for id of user and label the rectangle accordingly
                 # Aici poate pun ceva cu baza de date
+                now = datetime.now()
+                dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+                self.bd.updateTable(id,1,dt_string)
+
                 if id == 1:
                     cv.putText(image, "Beyonce", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 elif id == 2:
-                    cv.putText(image, "Steve", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
-                elif id == 3:
                     cv.putText(image, "Rachel", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
+                elif id == 3:
+                    cv.putText(image, "Steve", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)
                 coords = [x, y, w, h]
             else:
                 cv.putText(image, "Unknown", (x, y-4), cv.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv.LINE_AA)

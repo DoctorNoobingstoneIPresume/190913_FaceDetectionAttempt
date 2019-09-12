@@ -16,6 +16,9 @@ sys.path.insert(3,'3_DeepLearning/')
 from CDeepLearning import CDeepLearning
 sys.path.insert(4,'BD/')
 from dbMethods import *
+sys.path.insert(5,'5_Random')
+from CRandom import CRandom
+
 
 class CStart(Canvas):
     # --------------------------------------------------------------------------
@@ -49,9 +52,16 @@ class CStart(Canvas):
             print("metoda 2")
             self.method = CHOG(str(typeInput),self.input_path)
 
-        else:
+        elif method == 3:
             print("metoda 3")
             self.method = CDeepLearning(str(typeInput),self.input_path)
+
+        elif method == 5:
+            print("metoda 5")
+            self.method = CRandom (str (typeInput), self.input_path)
+
+        else:
+            raise NotImplementedError ()
 
         self.timerr = 0
         # self.prepare()

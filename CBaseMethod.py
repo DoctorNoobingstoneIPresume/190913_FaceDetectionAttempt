@@ -55,8 +55,8 @@ class CBaseMethod:
             # h, w, c = img.shape
             # print(str(ret) + " -- width:" + str(w) + " height: " + str(h))
             # self.img = imutils.resize(img, width)
-            image = self.detectFaces(img)
             if ret:
+                image = self.detectFaces(img)
                 # Return a boolean success flag and the current frame converted to BGR
                 return (ret, cv.cvtColor(image, cv.COLOR_BGR2RGB))
             else:

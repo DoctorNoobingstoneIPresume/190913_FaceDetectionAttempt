@@ -20,6 +20,7 @@ class CRandom(CBaseMethod):
     def __init__(self, tip, cale):
     #  --------------------------------------------------------------------------------------------
         CBaseMethod.__init__(self, tip, cale)
+        self.index = 0
 
     #  --------------------------------------------------------------------------------------------
     def recognizeFaces(self, image):  # functie pt recunoasterea fetelor in imagini/cadre
@@ -31,7 +32,7 @@ class CRandom(CBaseMethod):
 
         cv.rectangle (image, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
         text = "Random"
-        cv.putText (image, text, (int (1*w/4), int (1*h/4) - 20), cv.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+        cv.putText (image, text, (rc [0], rc [1] - 20), cv.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
         return image
 
     #  --------------------------------------------------------------------------------------------
@@ -45,6 +46,14 @@ class CRandom(CBaseMethod):
         ##cv.rectangle (image, (200, 100), (400, 200), color, 2)
         #return image
 
-        rc = [int (1*w/4), int (1*h/4), int (3*w/4), int (3*h/4)]
-        time.sleep (0.25)
+        n = 7
+        i = self.index
+        j = self.index + 1
+        rc = [int ((i+1)*w/(n+2)), int ((i+1)*h/(n+2)), int ((j+1)*w/(n+2)), int ((j+1)*h/(n+2))]
+
+        self.index += 1
+        if self.index >= n:
+            self.index = 0
+
+        time.sleep (0.5)
         return rc

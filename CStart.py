@@ -27,11 +27,17 @@ from CRandom import CRandom
 class ImageEx:
     def __init__ (self, index, image):
         (h, w) = image.shape [: 2]
-        print ("ImageEx: index {0:d}, image {1:d}x{2:d}.".format (index, w, h))
+        #print ("ImageEx: index {0:d}, image {1:d}x{2:d}.".format (index, w, h))
 
         self.index = index
         self.image = image
         self.rc    = [0, 0, 0, 0]
+
+        #print ("ImageEx: {0:s}", self)
+
+    def __str__ (self):
+        (h, w) = self.image.shape [: 2]
+        return "ImageEx: index {0:d}, image {1:d}x{2:d}, rc {3}.".format (self.index, w, h, self.rc)
 
 
 
@@ -152,6 +158,7 @@ class CStart(Canvas):
             workerthread = WorkerThread (self.method)
             workerthread.start ()
 
+        self.imageexFromWorker = None
         self.timerr = 0
         # self.prepare()
         self.update()
@@ -171,22 +178,38 @@ class CStart(Canvas):
             self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(img))
             self.canvas.create_image(width/2, height/2, anchor=CENTER, image = self.photo)
         else:
+            global condition, m2w_queue, w2m_queue
+
+            if True:
+                condition.acquire ()
+                #print ("len (w2m_queue) {0:d}.".format (len (w2m_queue)))
+                while len (w2m_queue):
+                    self.imageexFromWorker = w2m_queue.pop ()
+                    print ("self.imageexFromWorker {0}, self.index {1}.".format (self.imageexFromWorker, self.index))
+                condition.release ()
+
             ret, frame = method.getFrame()
             #img = cv.resize(frame, (self.width, self.height))
             # im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
             if ret:
                 if True:
-                    global condition, m2w_queue, w2m_queue
-
                     condition.acquire ()
                     if not len (m2w_queue):
-                        m2w_queue.append (ImageEx (self.index, frame))
+                        imageexFromMaster = ImageEx (self.index, frame)
+                        print ("     imageexFromMaster {0}, self.index {1}.".format (imageexFromMaster, self.index))
+                        sys.stdout.flush ()
+                        m2w_queue.append (imageexFromMaster)
+
                         condition.notify ()
                     condition.release ()
 
-                    #rc = method.detectFaces(frame)
-                    #color = (0, 0, 255)
-                    #cv.rectangle (frame, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
+                if self.imageexFromWorker:
+                    rc    = self.imageexFromWorker.rc
+                    index = self.imageexFromWorker.index
+
+                    if (self.index - index) < 2 * method.dtBetweenFrames:
+                        color = (0, 0, 255)
+                        cv.rectangle (frame, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
 
                 frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
@@ -201,7 +224,9 @@ class CStart(Canvas):
 
             self.index += 1
 
-            self.timerID = self.master.after(max (1, int (1000 / 80 / method.fps)), self.update)
+            # Daca vreau varianta rapida, aleg linia cu 5.
+            self.timerID = self.master.after (int (method.dtBetweenFrames), self.update)
+            #self.timerID = self.master.after (5                           , self.update)
 
     # --------------------------------------------------------------------------
     def setStartImage(self, file):

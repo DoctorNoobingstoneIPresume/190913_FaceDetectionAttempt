@@ -328,3 +328,5 @@ center(root)
 # -----------------------------------
 root.mainloop()
 # -----------------------------------
+print ("mainloop done.")
+stop_workerthread ()

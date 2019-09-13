@@ -6,6 +6,7 @@ from tkinter import *
 import cv2 as cv
 import PIL.Image, PIL.ImageTk
 import time
+import threading
 
 import sys
 sys.path.insert(1,'1_ViolaJones/')
@@ -18,6 +19,87 @@ sys.path.insert(4,'BD/')
 from dbMethods import *
 sys.path.insert(5,'5_Random')
 from CRandom import CRandom
+
+
+
+
+#ImageEx: An image with attached information (its index in the video and its rectangle of detected faces).
+class ImageEx:
+    def __init__ (self, index, image):
+        (h, w) = image.shape [: 2]
+        print ("ImageEx: index {0:d}, image {1:d}x{2:d}.".format (index, w, h))
+
+        self.index = index
+        self.image = image
+        self.rc    = [0, 0, 0, 0]
+
+
+
+# m2w_queue: A queue of ImageEx objects passed from Master to Worker.
+m2w_queue = []
+
+# w2m_queue: A queue of ImageEx objects passed from Worker to Master.
+w2m_queue = []
+
+# condition: A mutex-and-condition-variable.
+#   m2w_queue and w2m_queue should only be accessed while the mutex is acquired (after condition.acquire () and before condition.release ()).
+#   When the Master places items for the Worker in m2w_queue, the Master should call condition.notify ().
+#   This wakes up the Worker, who otherwise is deep in sleep by having called condition.wait ().
+condition = threading.Condition ()
+
+# workerthread:
+workerthread = None
+
+def stop_workerthread ():
+
+    print ("stopWorkerThread 0...")
+
+    global condition, m2w_queue, w2m_queue, workerthread
+    condition.acquire ()
+    m2w_queue.append (False)
+    condition.notify ()
+    condition.release ()
+
+    sys.stdout.flush ()
+    #workerthread.join ()
+    workerthread = None
+    print ("stopWorkerThread 1...")
+
+
+
+
+class WorkerThread (threading.Thread):
+    def __init__ (self, method):
+        threading.Thread.__init__ (self)
+        self.method = method
+
+    def run (self):
+        global m2w_queue, w2m_queue, lock, condition
+        while True:
+            condition.acquire ()
+
+            while not len (m2w_queue):
+                print ("WorkerThread: Nothing in m2w_queue... Calling condition.wait ()...")
+                sys.stdout.flush ()
+                condition.wait ()
+                print ("WorkerThread: I'm awake, I'm awake ! len (m2w_queue) == {0:d}.".format (len (m2w_queue)))
+
+            imageex = m2w_queue.pop ()
+            if type (imageex) is bool:
+                break
+
+            condition.release ()
+
+            sys.stdout.flush ()
+            t0         = time.perf_counter ()
+            imageex.rc = self.method.detectFaces (imageex.image)
+            t1         = time.perf_counter ()
+            print ("WorkerThread: dt {0:0.3f}".format (t1 - t0))
+
+            condition.acquire ()
+            w2m_queue.append (imageex)
+            condition.release ()
+
 
 
 class CStart(Canvas):
@@ -36,6 +118,7 @@ class CStart(Canvas):
         self.timerID = 0
 
         self.myCanvas = []
+        self.method   = None
 
 
     # --------------------------------------------------------------------------
@@ -63,6 +146,12 @@ class CStart(Canvas):
         else:
             raise NotImplementedError ()
 
+        self.index = 0
+        global workerthread
+        if not workerthread:
+            workerthread = WorkerThread (self.method)
+            workerthread.start ()
+
         self.timerr = 0
         # self.prepare()
         self.update()
@@ -86,10 +175,18 @@ class CStart(Canvas):
             #img = cv.resize(frame, (self.width, self.height))
             # im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
             if ret:
-                rc = method.detectFaces(frame)
+                if True:
+                    global condition, m2w_queue, w2m_queue
 
-                color = (0, 0, 255)
-                cv.rectangle (frame, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
+                    condition.acquire ()
+                    if not len (m2w_queue):
+                        m2w_queue.append (ImageEx (self.index, frame))
+                        condition.notify ()
+                    condition.release ()
+
+                    #rc = method.detectFaces(frame)
+                    #color = (0, 0, 255)
+                    #cv.rectangle (frame, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
 
                 frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
@@ -99,8 +196,11 @@ class CStart(Canvas):
             timeBetweenFrames = timeAfter - self.timeStart
             self.timeStart = timeAfter
 
-            print ("dt {0:0.3f}".format (timeBetweenFrames))
-            sys.stdout.flush()
+            #print ("dt {0:0.3f}".format (timeBetweenFrames))
+            #sys.stdout.flush()
+
+            self.index += 1
+
             self.timerID = self.master.after(max (1, int (1000 / 80 / method.fps)), self.update)
 
     # --------------------------------------------------------------------------
@@ -173,10 +273,15 @@ class CStart(Canvas):
     # --------------------------------------------------------------------------
     def delete(self):
     # --------------------------------------------------------------------------
+
+        print ("delete 0...")
+
         if self.timerID != 0:
             self.master.after_cancel(self.timerID)
         del self.method
         self.canvas.delete("all")
+
+        print ("delete 2...")
 
 
 

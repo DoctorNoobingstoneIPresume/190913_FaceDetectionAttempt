@@ -86,6 +86,12 @@ class CStart(Canvas):
             #img = cv.resize(frame, (self.width, self.height))
             # im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
             if ret:
+                rc = method.detectFaces(frame)
+
+                color = (0, 0, 255)
+                cv.rectangle (frame, (rc [0], rc [1]), (rc [2], rc [3]), color, 2)
+
+                frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
                 self.canvas.create_image(width/2, height/2, anchor=CENTER, image = self.photo)
 

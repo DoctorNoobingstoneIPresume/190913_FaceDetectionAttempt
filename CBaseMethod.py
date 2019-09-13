@@ -96,6 +96,8 @@ class CBaseMethod:
         elif self.tip == "2":
             if self.cale:
                 self.video = cv.VideoCapture(self.cale)
+                self.fps   = self.video.get (cv.CAP_PROP_FPS)
+                print ("FPS {%f}.", self.fps)
                 # self.recognizeFacesVideo()
                 # self.video.release()
             else:
@@ -104,6 +106,7 @@ class CBaseMethod:
         # 3. LIVE --- REAL-TIME
         elif self.tip == "3":
             self.video = cv.VideoCapture(0) #'http:192.168.43.1:8080/video'
+            self.fps   = self.video.get (cv.CAP_PROP_FPS)
             # if video:
             #     self.recognizeFacesVideo()
             #     self.video.release()

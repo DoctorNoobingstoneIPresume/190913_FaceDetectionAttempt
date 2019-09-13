@@ -94,7 +94,7 @@ class CStart(Canvas):
             self.timeStart = timeAfter
 
             print ("dt {0:0.3f}".format (timeBetweenFrames))
-            self.timerID = self.master.after(5, self.update)
+            self.timerID = self.master.after(max (1, int (1000 / 80 / method.fps)), self.update)
         sys.stdout.flush()
 
     # --------------------------------------------------------------------------

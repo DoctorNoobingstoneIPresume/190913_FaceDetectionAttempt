@@ -56,9 +56,10 @@ class CBaseMethod:
             # print(str(ret) + " -- width:" + str(w) + " height: " + str(h))
             # self.img = imutils.resize(img, width)
             if ret:
-                image = self.detectFaces(img)
-                # Return a boolean success flag and the current frame converted to BGR
-                return (ret, cv.cvtColor(image, cv.COLOR_BGR2RGB))
+                # Now it is up to the caller to call detectFaces.
+                #image = self.detectFaces(img)
+                # Return a boolean success flag and the current frame (to be converted to BGR by caller):
+                return (ret, img)
             else:
                 return (ret, None)
         else:
@@ -87,6 +88,7 @@ class CBaseMethod:
         if self.tip == "1":
             if self.cale:
                 self.img = cv.imread(self.cale)
+                self.fps = 1
                 # self.recognizeFaces()
                 # cv.waitKey(0)
             else:
@@ -113,6 +115,8 @@ class CBaseMethod:
         else:
             print ("--help daca nu stii")
         # cv.destroyAllWindows()
+
+        self.dtBetweenFrames = max (1.0, 1000 / self.fps)
 
     #  --------------------------------------------------------------------------------------------
     def getSize(self):

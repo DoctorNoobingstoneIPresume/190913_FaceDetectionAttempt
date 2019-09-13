@@ -46,4 +46,5 @@ class CRandom(CBaseMethod):
         #return image
 
         rc = [int (1*w/4), int (1*h/4), int (3*w/4), int (3*h/4)]
+        time.sleep (0.25)
         return rc
